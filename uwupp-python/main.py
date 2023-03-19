@@ -37,7 +37,7 @@ if len(sys.argv) > 1:
         
         if '-v' in arg or '--version' in arg:
             print()
-            print("Version v0.1a")
+            print("v0.1.0 Pre-release")
             print("Not all UwU++ features are supported in this binary, and it's HIGHLY EXPERIMENTAL.")
             print()
             exit(0)
