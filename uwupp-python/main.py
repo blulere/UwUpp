@@ -3,15 +3,9 @@ import os
 import time
 
 import interpreter
+import exits
 
-def show_help_and_exit():
-    print("uwupp (python version) help")
-    print("point to an .uwu, .uwupp or .uwu++ file to run it.")
-    print("use --transpile or -t flag to convert it to a python file.")
-    print("use --run-after or -r flag to run the file immediately after creation.")
-    print()
-    print("use the C++ version (coming soon) for better performance")
-    exit(0)
+# This release's version will be v0.2.0-python.
 
 transpile = False
 input_file = False
@@ -21,6 +15,8 @@ timer_start = time.time()
 
 if len(sys.argv) > 1:
     for arg in sys.argv:
+        if '-h' in arg or '--help' in arg:
+            exits.show_help_and_exit()
         if '-t' in arg or '--transpile' in arg:
             # transpile to a python file
             transpile = True
@@ -36,17 +32,12 @@ if len(sys.argv) > 1:
             input_file = str(arg)
         
         if '-v' in arg or '--version' in arg:
-            print()
-            print("v0.1.0 Pre-release")
-            print("Not all UwU++ features are supported in this binary, and it's HIGHLY EXPERIMENTAL.")
-            print()
-            exit(0)
+            exits.version_and_exit()
 else:
 
     if not input_file:
         print("error: no input files were specified")
-        print('------------------------------------')
-    show_help_and_exit()
+        exit(0)
 
 # open the input file
 try:
