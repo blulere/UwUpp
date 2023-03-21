@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
@@ -70,30 +71,38 @@ func main() {
 	newfile_name := strings.Replace(input_filepath, ".uwupp", ".py", 1)
 	newfile_name = strings.Replace(newfile_name, ".uwu", ".py", 1)
 	newfile_name = strings.Replace(newfile_name, ".uwu++", ".py", 1)
-	fmt.Println("The new filename is " + newfile_name)
 	fs2, err = Uwupp_to_python(fs2)
 	if err != nil {
 		exception_and_exit("error: transpiling the UwU++ code to python code failed.", err)
 	}
-	fmt.Println("Getting python code worked")
 	// transpilation completed
-	// write to the file now
-	fmt.Println("Now writing to the file")
 
-	err = os.WriteFile(newfile_name, []byte(fs2), 0644)
+	// this code doesn't work sometimes and I have no idea why.
+	// it seems a lot more stable when running through ioutil which is weird because it's the same damn function.
+	err = ioutil.WriteFile(newfile_name, []byte(fs2), 0644)
 
 	if err != nil {
 		exception_and_exit("error: writing to the new python file failed. you're likely out of storage space or your antivirus blocked the program...", err)
 	}
 	// get timer in seconds and milliseconds
 	timer := float32(time.Now().UnixMilli()-timer_start) / 1000
-	fmt.Printf("done, operating completed in %v seconds\n", timer)
+	fmt.Printf("done, operation completed in %v seconds\n", timer)
+	// FIXME: WHAT THE HELL IS WRONG WITH THIS CODE!?!?!?!?!?!?!?!?!?!? WHY DOESN'T IT WORK???????
 	if run_after {
-		fmt.Println("Now running the file")
 		if runtime.GOOS == "windows" {
-			exec.Command("python main.py -t " + newfile_name)
+			cmd := exec.Command("cmd", "python", "main.py", "-t"+newfile_name)
+			out, err := cmd.CombinedOutput()
+			fmt.Println(string(out))
+			if err != nil {
+				exception_and_exit("error: something went wrong whilst trying to run the python file. maybe you're out of storage?", err)
+			}
 		} else {
-			exec.Command("python3 main.py -t " + newfile_name)
+			cmd := exec.Command("bash", "python3", "main.py", "-t"+newfile_name)
+			out, err := cmd.Output()
+			fmt.Println(string(out))
+			if err != nil {
+				exception_and_exit("error: something went wrong whilst trying to run the python file. maybe you're out of storage?", err)
+			}
 		}
 		// exec.Command has no error variable so no need to check for errors here
 	}
