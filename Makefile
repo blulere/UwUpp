@@ -15,7 +15,7 @@ macos: uwupp-go/main.go
 	echo Finished!
 silicon: uwupp-go/main.go
 	echo Building a macOS Silicon executable...
-	GOOS=darwin GOARCH=arm64 go build -o uwupp-go/bin/uwupp-sillicon uwupp-go/main.go uwupp-go/interpreter.go uwupp-go/exits.go
+	GOOS=darwin GOARCH=arm64 go build -o uwupp-go/bin/uwupp-silicon uwupp-go/main.go uwupp-go/interpreter.go uwupp-go/exits.go
 	echo Finished!
 
 clean:
