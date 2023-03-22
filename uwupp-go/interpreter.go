@@ -23,6 +23,8 @@ func (b Buffer) replace(rep string, with string) Buffer {
 	return b
 }
 
+// Add what's in the buffer to a token,
+// then delete everything in the buffer.
 func (b Buffer) flush(t []string) {
 	t = append(t, b.s)
 	b.s = ""
@@ -47,43 +49,61 @@ func lexer(fs string) ([]string, error) {
 
 		// new line is not a comment by default
 		is_comment := false
+		// flush at the end if there is a match
+		is_match := false
 
-		// split line by words
-		words := strings.Split(line, " ")
-		wordsindex := 0
+		// split line by chars
+		var chars []byte
+		charsindex := 0
+		for i := 0; i < len(lines); i++ {
+			chars[i] = line[i]
+		}
 
 		// for every line, initialise a buffer
 		// this also flushes the buffer
 		buffer := Buffer{}
-		// iterate through every word
-		for wordsindex < len(words) {
+		// iterate through every character
+		// if there are no matches, add the character to the buffer
+		for charsindex < len(chars) {
 			// shorthand
-			word := words[wordsindex]
+			var char = chars[charsindex]
 
-			// split each keyword by space UNLESS is_comment or is_string
-			if !is_comment || !is_string {
-				if word == " " {
-					// then flush the buffer
-					buffer.flush(tokens)
+			// check if in a string
+			if !is_string {
+				if char == '"' {
+					is_string = true
 				}
-				// now, match the buffer to a string, if it matches, do the same thing
-				if buffer.contains("UwU") {
-					buffer.replace("UwU", "# UwU")
-					buffer.flush(tokens)
+			} else {
+				if char == '"' {
+					is_string = false
+				}
+			}
+			// check if in a comment
+			if !is_comment {
+				if buffer.s == "UwU" {
 					is_comment = true
 				}
-
-				if buffer.contains("iws") {
-					buffer.replace("iws", "=")
-					buffer.flush(tokens)
+			} else {
+				if buffer.s == "UwU" {
+					is_comment = false
 				}
 			}
 
-			// add current word to buffer + space
-			buffer.s += word + " "
+			// TODO: match at space
 
-			// increase words index by 1
-			wordsindex++
+			// if there are no matches,
+			// add the character to the buffer
+			if !is_match {
+				buffer.s += string(char)
+			} else {
+				tokens = append(tokens, buffer.s+" ")
+				buffer.s = ""
+			}
+			// but if there is a match,
+			// flush the buffer
+
+			// increase chars index by 1
+			charsindex++
 		}
 
 		// add a newline to the end of the line

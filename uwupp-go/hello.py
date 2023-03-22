@@ -1,4 +1,4 @@
-UwU Is this a comment ? 
-i iws 1 
-nuzzles("Hewwo, Wowld!") 
+# # # # # UwU Is this a comment ? 
+i = 1 
+print("Hewwo, Wowld!") 
 nuzzles(i) 
