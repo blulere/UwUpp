@@ -1,0 +1,23 @@
+UwU Fizzbuzz example                             ?
+UwU This is also a good demonstration of modulus ?
+UwU - blulere                                    ?
+UwU For transpiling support the code was         ?
+UwU extended slightly.                           ?
+
+UwU Change this to change when the numbers should stop.
+stop_counting iws 100
+
+i iws 0
+OwO *notices i wess than stop_counting*
+    *notices i moduwo 3 eqwaw 0 and i moduwo 5 eqwaw 0*
+        nuzzles("FwizzBwuzz")
+    ewse *i moduwo 3 eqwaw 0*
+        nuzzles("Fwizz")
+    ewse *notices i moduwo 5 eqwaw 0*
+        nuzzles("Bwuzz")
+    ewse
+        nuzzles(i)
+    stawp
+
+    i iws i pwus 1
+stawp

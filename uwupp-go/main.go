@@ -71,7 +71,7 @@ func main() {
 	newfile_name := strings.Replace(input_filepath, ".uwupp", ".py", 1)
 	newfile_name = strings.Replace(newfile_name, ".uwu", ".py", 1)
 	newfile_name = strings.Replace(newfile_name, ".uwu++", ".py", 1)
-	fs2, err = Uwupp_to_python(fs2)
+	fs2, err = uwupp_to_python(fs2)
 	if err != nil {
 		exception_and_exit("error: transpiling the UwU++ code to python code failed.", err)
 	}

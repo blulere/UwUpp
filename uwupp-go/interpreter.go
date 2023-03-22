@@ -5,137 +5,110 @@ import (
 	"strings"
 )
 
-// easier interop with python and go codebases
-// TODO: move all language definitions into a common language
-type Line struct {
+// to make interop between go and python easier
+type Buffer struct {
 	s string
 }
 
-func (l Line) replace(repl string, with string) Line {
-	// fmt.Println("warning: don't use this anymore.")
-    l.s = strings.Replace(l.s, repl, with, -1)
-    return l
-}
-
-func (l Line) Contains(_ Line, s string) bool {
-	if strings.Contains(l.s, s) { 
+func (b Buffer) contains(s string) bool {
+	if strings.Contains(b.s, s) {
 		return true
-	} else { 
+	} else {
 		return false
 	}
 }
 
-func Uwupp_to_python(fs string) (string, error) {
-	var pythoncode string
+func (b Buffer) replace(rep string, with string) Buffer {
+	b.s = strings.Replace(b.s, rep, with, -1)
+	return b
+}
+
+func (b Buffer) flush(t []string) {
+	t = append(t, b.s)
+	b.s = ""
+}
+
+func lexer(fs string) ([]string, error) {
+	var tokens []string
 	var err error = nil
 
-	// split fs into lines
+	// split fs by lines
+	lines := strings.Split(fs, "\n")
+	linesindex := 0
 
-	lineslist := strings.Split(fs, "\n")
+	// toggle for a string
+	// if reached EOF and is string, something is wrong
+	is_string := false
 
-	current_line := 0
-
-	for i := 0; i < len(lineslist); i++ {
+	// iterate through every line
+	for linesindex < len(lines) {
 		// shorthand
-		// screw Go and not having classes :3
-		line := Line {lineslist[i],}
-		
-		// each line is automatically this until it isn't.
+		line := lines[linesindex]
+
+		// new line is not a comment by default
 		is_comment := false
-		is_string := false
 
-		if !is_comment {
-			// this line was never a coment...
-			if line.Contains(line, "UwU") {
-				// but now the rest of it is
-				is_comment = true
-				line = line.replace("UwU", "# UwU")
-			}
-		}
+		// split line by words
+		words := strings.Split(line, " ")
+		wordsindex := 0
 
-		// if !is_string {
-			// this line was never a string...
-			// if line.Contains(line, "\"\"")
-				// TODO: implement string ignoring
-			// }
-		// }
+		// for every line, initialise a buffer
+		// this also flushes the buffer
+		buffer := Buffer{}
+		// iterate through every word
+		for wordsindex < len(words) {
+			// shorthand
+			word := words[wordsindex]
 
-		// errors
-		if line.Contains(line, "notices i iws 0") {
-			return "", fmt.Errorf("error: for loops are not supported at this time due to the transpiler's limitations at the moment. please convert this to a while loop")
-		}
-		// warnings
-		if line.Contains(line, "gweatew twan") {
-			fmt.Printf("warning: this uses issue syntax from the original version of UwU++ (gweatew twan). make sure to fix this to avoid deprecation (line %v)\n", current_line)
-			line = line.replace("gweatew twan", ">")
-		}
-		if line.Contains(line, "wess twan") {
-			fmt.Printf("warning: this uses issue syntax from the original version of UwU++ (wess twan). make sure to fix this to avoid deprecation (line %v)\n", current_line)
-			line = line.replace("wess twan", "<")
-		}
-		if line.Contains(line, "eqwall twoo") {
-			fmt.Printf("warning: this uses issue syntax from the original version of UwU++ (eqwall twoo). make sure to fix this to avoid deprecation (line %v)\n", current_line)
-			line = line.replace("eqwall twoo", "==")
-		}
-		if line.Contains(line, "nuzzels") {
-			fmt.Printf("warning: this uses issue syntax from the original version of UwU++ (nuzzels). make sure to fix this to avoid deprecation (line %v)\n", current_line)
-			line = line.replace("nuzzels(", "print(")
-		}
-
-		if !is_string {
-			line = line.replace("stwing", "str")
-			line = line.replace("iws", "=")
-			line = line.replace("OwO *notices", "while")
-			line = line.replace("ewse *notices", "elif")
-			line = line.replace("ewse", "else:")
-			line = line.replace("*notices", "if")
-			line = line.replace("wess than", "<")
-			line = line.replace("gweatew than", ">")
-			line = line.replace("not eqwaws", "!=")
-			line = line.replace("*", ":")
-			line = line.replace("twimes", "*")
-			line = line.replace("moduwo", "%")
-			line = line.replace("eqwaw", "==")
-			line = line.replace("diwide", "/")
-			line = line.replace("nuzzles(", "print(")
-			line = line.replace("stawp", "")
-			line = line.replace("pwus", "+")
-			
-			/*
-			Python doesn't support fixed array allocation.
-			This is a workaround.
-			So far it works only with Strings, Ints
-			and Nones.
-			*/
-
-			if line.Contains(line, "awway<") {
-				if line.Contains(line, "stwing") {
-					line = line.replace("awway<", "[\"\"]*")
-				} else if line.Contains(line, "int") {
-					line = line.replace("awway<", "[0]*")
-				} else {
-					line = line.replace("awway<", "[None]*")
+			// split each keyword by space UNLESS is_comment or is_string
+			if !is_comment || !is_string {
+				if word == " " {
+					// then flush the buffer
+					buffer.flush(tokens)
 				}
-				line = line.replace("stwing", "str")
-				line = line.replace("stawp", "")
-           	 line = line.replace("pwus", "+")
+				// now, match the buffer to a string, if it matches, do the same thing
+				if buffer.contains("UwU") {
+					buffer.replace("UwU", "# UwU")
+					buffer.flush(tokens)
+					is_comment = true
+				}
+
+				if buffer.contains("iws") {
+					buffer.replace("iws", "=")
+					buffer.flush(tokens)
+				}
 			}
+
+			// add current word to buffer + space
+			buffer.s += word + " "
+
+			// increase words index by 1
+			wordsindex++
 		}
 
-		pythoncode += line.s
-		pythoncode += "\n"
-		current_line ++
+		// add a newline to the end of the line
+		tokens = append(tokens, buffer.s+"\n")
+		// increase lines index by 1
+		linesindex++
+		// print the buffer to stdout
+		fmt.Println(line)
+	}
+	// return the final list of tokens + error code
+	return tokens, err
+}
+
+func uwupp_to_python(fs string) (string, error) {
+	var output string
+	var err error = nil
+
+	tokens, err := lexer(fs)
+	if err != nil {
+		return "", err
+	}
+	for i := 0; i < len(tokens); i++ {
+		// take each token and add it to the file
+		output += tokens[i]
 	}
 
-	return pythoncode, err
-}
-
-func Python_to_uwupp(fs string) string {
-	// coming soon
-	return ""
-}
-
-func Interpreter(fs string) string {
-	// coming soon
-	return ""
+	return output, err
 }

@@ -45,7 +45,9 @@ def uwupp_to_python(fs: str):
         # TODO: Add checks for strings so that their contents aren't modified (this is KILLING me !!!)
 
         if is_string == False:
-            line = line.replace("stwing", "str")
+            line = line.replace("Stwing", "str")
+            line = line.replace("Int", "int")
+            line = line.replace("Boowean", "bool")
             line = line.replace("iws", "=")
             line = line.replace("OwO *notices", "while")
             line = line.replace("ewse *notices", "elif")
