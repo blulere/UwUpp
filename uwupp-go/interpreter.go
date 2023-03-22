@@ -89,18 +89,22 @@ func lexer(fs string) ([]string, error) {
 				}
 			}
 
-			// TODO: match at space
-
+			// TODO: match at spac
+			if !is_string || !is_comment {
+				if buffer.s == " " {
+					is_match = true
+				}
+			}
 			// if there are no matches,
 			// add the character to the buffer
+			// but if there is a match,
+			// flush the buffer
 			if !is_match {
 				buffer.s += string(char)
 			} else {
 				tokens = append(tokens, buffer.s+" ")
 				buffer.s = ""
 			}
-			// but if there is a match,
-			// flush the buffer
 
 			// increase chars index by 1
 			charsindex++
