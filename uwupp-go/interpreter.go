@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 package main
 
 import (
@@ -118,10 +119,63 @@ func lexer(fs string) ([]string, error) {
 		fmt.Println(line)
 	}
 	// return the final list of tokens + error code
+=======
+// get this shit working before you do anything else.
+
+package main
+
+func lexer(fs string) ([]string, error) {
+	var tokens []string
+	var err error = nil
+
+	// split fs into chars
+	charsindex := 0
+	var chars []byte
+	for i := 0; i < len(fs), ++i {
+		chars[i] == []byte(fs[i])
+	}
+
+	is_string := false
+	is_comment := false
+	is_match := false
+	
+	// buffer for comparing to strings with
+	var buffer string
+	// iterate through every char
+	for charsindex < len(chars) {
+		// shorthand for a single char
+		char := chars[charsindex]
+
+		// clear the buffer every newline + other stuff
+		if char == '\n' {
+			// remove this for multi-line strings support
+			is_string = false
+			is_comment = false
+			is_match = false
+			buffer = ""
+		}
+		if char == ' ' {
+			// space
+			is_match = true
+		}
+
+		// check for matches in chars
+
+		// clear the buffer if a match was found
+		if is_match {
+			buffer = ""
+		} else {
+			// otherwise add the current char to the buffer
+			buffer += char
+		}
+	}
+
+>>>>>>> Stashed changes
 	return tokens, err
 }
 
 func uwupp_to_python(fs string) (string, error) {
+<<<<<<< Updated upstream
 	var output string
 	var err error = nil
 
@@ -135,4 +189,11 @@ func uwupp_to_python(fs string) (string, error) {
 	}
 
 	return output, err
+=======
+	var tokens []string
+	var err error = nil
+	var pythoncode string
+
+	return pythoncode, err
+>>>>>>> Stashed changes
 }
