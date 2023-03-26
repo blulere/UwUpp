@@ -57,12 +57,13 @@ newfile_name = input_file.replace('.uwupp', '.py', 1)
 newfile_name = newfile_name.replace('.uwu', '.py', 1)
 newfile_name = newfile_name.replace('.uwu++', '.py', 1)
 with open(newfile_name, 'w') as newfile:
-    try:
-        newfile_content = interpreter.uwupp_to_python(fs)
-    except Exception as e:
-        print('error: something went wrong. (1)')
-        print(e)
-        exit(-1)
+    # try:
+    newfile_content = interpreter.uwupp_to_python(fs)
+    # except Exception as e:
+    e = ""
+    print('error: something went wrong. (1)')
+    print(e)
+    # exit(-1)
     newfile.write(newfile_content)
     newfile.close()
     timer = time.time() - timer_start

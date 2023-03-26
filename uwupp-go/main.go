@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
@@ -79,7 +78,7 @@ func main() {
 
 	// this code doesn't work sometimes and I have no idea why.
 	// it seems a lot more stable when running through ioutil which is weird because it's the same damn function.
-	err = ioutil.WriteFile(newfile_name, []byte(fs2), 0644)
+	err = os.WriteFile(newfile_name, []byte(fs2), 0644)
 
 	if err != nil {
 		exception_and_exit("error: writing to the new python file failed. you're likely out of storage space or your antivirus blocked the program...", err)

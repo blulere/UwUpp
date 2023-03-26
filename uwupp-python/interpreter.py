@@ -1,109 +1,116 @@
+class Buffer:
+    def __init__(self, s, n):
+        self.s: str = s
+        # next word
+        self.n: str = n
+    
+    def replace(self, rep, _with):
+        self.s.replace(rep, _with, -1)
+
+
+# Token types since they're used by everything anyways,
+# no point in putting them away from global scope
+COMMENT = 0
+VARIABLE = 1
+ASSIGNMENT = 2
+NUMBER = 3
+WHILE = 4
+GREATERTHAN = 5
+# * at end of loop
+STARTLOOP = 6
+ADD = 7
+# stawp
+ENDLOOP = 8
+FUNCTIONCALL = 9
+OPENPAREN = 10
+CLOSEPAREN = 11
+EOF = 12
+FUNCTIONARG = 13
+UNKNOWN = 14
+
+class Token:
+    def __init__(self, type: int, content: str):
+        self.type = type
+        self.content = content
+
+def tokenise(fs: str):
+    # sanity
+    if not fs.endswith("\n"):
+        fs += "\n"
+    tokens = []
+
+    buffer = ""
+    word = ""
+    is_comment = False
+    is_string = False
+    is_match = False
+
+    # split fs by words
+    words = fs.split(" ")
+
+    for word in words:
+        word += " "
+        
+        if buffer.endswith("\n"):
+            buffer = ""
+            is_comment = False
+            is_match = False
+
+        # check for comments
+        if buffer.startswith("UwU"):
+            # beginning of comment definitely
+            is_comment = True
+
+        # check for strings
+        if buffer.startswith('"') and not buffer.endswith('"'):
+            # beginning of string definitely
+            is_string = True
+
+        if buffer.endswith('"'):
+            # end of string definitely
+            is_string = False
+
+        if not is_string and not is_comment:
+            if "iws" in buffer:
+                tokens.append(Token(ASSIGNMENT, "iws"))
+                is_match = True
+            elif "OwO *notices" in buffer:
+                tokens.append(Token(WHILE, "OwO *notices"))
+                is_match = True
+
+        print("Is match: " + str(is_match))
+        print("Is string: " + str(is_string))
+        print("Is comment: " + str(is_comment))
+        print()
+
+        if is_match:
+            buffer = ""
+            is_match = False
+        else:
+            buffer += word
+            pass
+
+    return tokens
+
+
+
+def parse(tokens: list, mode: int = 1):
+    final = ""
+    
+    if mode == 0:
+        # silently ignore
+        return
+    if mode == 1:
+        # parse into Python code.
+        for token in tokens:
+            final += token.content
+    
+    return final
+
 def uwupp_to_python(fs: str):
-    pythoncode = ''
+    NONE = 0
+    PYTHON = 1
+    tokens = tokenise(fs)
+    pythoncode = str(parse(tokens, PYTHON))
 
-    # split fs into lines, then into words.
-    lineslist = fs.split('\n')
-    
-    current_line = 1
-    current_word = 1
-
-    for line in lineslist:
-        # each new line is automatically not a comment
-        # until it comes across a comment.
-        is_comment = False
-        # ignore most rules as currently parsing a string
-        is_string = False
-        # reset the current word of the line
-        current_word = 1
-
-        wordslist = line.split(' ')
-        
-        if is_comment == False:
-            # this line was never a comment...
-            if 'UwU' in line:
-                # but now the rest of it is
-                is_comment = True
-                line = line.replace('UwU', '# UwU')
-        
-        # errors
-        if '*notices i iws 0' in line:
-            raise Exception('error: for loops are not supported currently. please convert this to a while loop')
-        # warnings
-        if 'gweatew twan' in line:
-            print(f"warning: this uses issue syntax from the original version of UwU++ (gweatew twan). make sure to fix this to avoid deprecation (line {current_line})")
-            line = line.replace('gweatew twan', '>')
-        if 'wess twan' in line:
-            print(f"warning: this uses issue syntax from the original version of UwU++ (wess twan). make sure to fix this to avoid deprecation (line {current_line})")
-            line = line.replace('wess twan', '<')
-        if 'eqwall twoo' in line:
-            print(f"warning: this uses issue syntax from the original version of UwU++ (eqwall twoo). make sure to fix this to avoid deprecation (line {current_line})")
-            line = line.replace('eqwall twoo', '==')
-        if 'nuzzels(' in line:
-            print(f"warning: this uses issue syntax from the original version of UwU++ (nuzzels). make sure to fix this to avoid deprecation (line {current_line})")
-            line = line.replace('nuzzels(', 'print(')
-
-        # TODO: Add checks for strings so that their contents aren't modified (this is KILLING me !!!)
-
-        if is_string == False:
-            line = line.replace("Stwing", "str")
-            line = line.replace("Int", "int")
-            line = line.replace("Boowean", "bool")
-            line = line.replace("iws", "=")
-            line = line.replace("OwO *notices", "while")
-            line = line.replace("ewse *notices", "elif")
-            line = line.replace("ewse", "else:")
-            line = line.replace("*notices", "if")
-            line = line.replace("wess than", "<")
-            line = line.replace("gweatew than", ">")
-            line = line.replace("not eqwaws", "!=")
-            line = line.replace("*", ":")
-            line = line.replace("twimes", "*")
-            line = line.replace("moduwo", "%")
-            line = line.replace("eqwaw", "==")
-            line = line.replace("diwide", "/")
-            line = line.replace("nuzzles(", "print(")
-            line = line.replace("stawp", "")
-            line = line.replace("pwus", "+")
-            
-            """
-            Python doesn't support fixed array allocation.
-            This is a workaround.
-            So far it works only with Strings, Ints
-            and Nones.
-            """
-            if 'awway<' in line:
-                if 'stwing' in line:
-                    line = line.replace('awway<', '[""]*')
-                elif 'int' in line:
-                    line = line.replace('awway<', '[0]*')
-                else:
-                    line = line.replace('awway<', '[None]*')
-                line = line.replace('>', '')
-            line = line.replace('stwing', 'str')
-            line = line.replace('stawp', '')
-            line = line.replace('pwus', '+')
-
-        pythoncode += line
-
-        # increment the word counter
-        # and add a space because bug
-        # current_word += 1
-
-        # incremenet the line counter
-        # and add a newline because bug
-        pythoncode += '\n'
-        current_line += 1
-    
     return pythoncode
-
-def python_to_uwupp(fs):
-    # coming soon
-    pass
-
-def interpreter(fs):
-    """
-    Interpret the code directly without having to make
-    a new Python file
-    """
-    # coming soon
-    pass

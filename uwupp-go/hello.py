@@ -1,4 +1,3 @@
-# # # # # UwU Is this a comment ? 
-i = 1 
-print("Hewwo, Wowld!") 
-nuzzles(i) 
+while a gweatew than b*
+    # UwU do something?= b pwus 1
+stawp
