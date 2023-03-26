@@ -43,37 +43,23 @@ def tokenise(fs: str):
     buffer = ""
     is_comment = False
     is_string = False
+    is_match = False
 
-    # split fs by chars
-    chars = list(fs)
+    # split fs by lines
+    lines = fs.splitlines()
+    for line in lines:
+        # do things every new line
+        
+        # clear the buffer
+        buffer = ""
 
-    for char in chars:
-        buffer += char
+        # split line by chars
+        chars = list(fs)
+        for char in chars:
+            buffer += char
 
-        # check for newline
-        if buffer.endswith("\n"):
-            if is_comment:
-                # add the entire line as a token
-                tokens.append(Token(COMMENT, buffer))
-            # comments are false on every newline
-            is_comment = False
 
-        # check for comment
-        if not is_comment:
-            if "UwU" in buffer:
-                is_comment = True
-
-        # check for string
-        if not is_string:
-            if buffer.startswith('"'):
-                # this is beginning of string
-                is_string = True
-        else:
-            if buffer.endswith('"'):
-                # this is end of string
-                is_string = False
-                tokens.append(Token(STRING, buffer))
-
+            
 
     return tokens
 
