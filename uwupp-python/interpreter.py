@@ -27,6 +27,7 @@ CLOSEPAREN = 11
 EOF = 12
 FUNCTIONARG = 13
 UNKNOWN = 14
+STRING = 15
 
 class Token:
     def __init__(self, type: int, content: str):
@@ -40,58 +41,41 @@ def tokenise(fs: str):
     tokens = []
 
     buffer = ""
-    word = ""
     is_comment = False
     is_string = False
-    is_match = False
 
-    # split fs by words
-    words = fs.split(" ")
+    # split fs by chars
+    chars = list(fs)
 
-    for word in words:
-        word += " "
-        
+    for char in chars:
+        buffer += char
+
+        # check for newline
         if buffer.endswith("\n"):
-            buffer = ""
+            if is_comment:
+                # add the entire line as a token
+                tokens.append(Token(COMMENT, buffer))
+            # comments are false on every newline
             is_comment = False
-            is_match = False
 
-        # check for comments
-        if buffer.startswith("UwU"):
-            # beginning of comment definitely
-            is_comment = True
+        # check for comment
+        if not is_comment:
+            if "UwU" in buffer:
+                is_comment = True
 
-        # check for strings
-        if buffer.startswith('"') and not buffer.endswith('"'):
-            # beginning of string definitely
-            is_string = True
-
-        if buffer.endswith('"'):
-            # end of string definitely
-            is_string = False
-
-        if not is_string and not is_comment:
-            if "iws" in buffer:
-                tokens.append(Token(ASSIGNMENT, "iws"))
-                is_match = True
-            elif "OwO *notices" in buffer:
-                tokens.append(Token(WHILE, "OwO *notices"))
-                is_match = True
-
-        print("Is match: " + str(is_match))
-        print("Is string: " + str(is_string))
-        print("Is comment: " + str(is_comment))
-        print()
-
-        if is_match:
-            buffer = ""
-            is_match = False
+        # check for string
+        if not is_string:
+            if buffer.startswith('"'):
+                # this is beginning of string
+                is_string = True
         else:
-            buffer += word
-            pass
+            if buffer.endswith('"'):
+                # this is end of string
+                is_string = False
+                tokens.append(Token(STRING, buffer))
+
 
     return tokens
-
 
 
 def parse(tokens: list, mode: int = 1):
