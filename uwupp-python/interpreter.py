@@ -28,6 +28,7 @@ EOF = 12
 FUNCTIONARG = 13
 UNKNOWN = 14
 STRING = 15
+NEWLINE = 16
 
 class Token:
     def __init__(self, type: int, content: str):
@@ -35,7 +36,7 @@ class Token:
         self.content = content
 
 def tokenise(fs: str):
-    # sanity
+    # add a newline at the end of the file for parsing sanity
     if not fs.endswith("\n"):
         fs += "\n"
     tokens = []
@@ -43,7 +44,7 @@ def tokenise(fs: str):
     buffer = ""
     is_comment = False
     is_string = False
-    is_match = False
+    in_loop = 0
 
     # split fs by lines
     lines = fs.splitlines()
@@ -52,14 +53,58 @@ def tokenise(fs: str):
         
         # clear the buffer
         buffer = ""
+        
+        is_comment = False
+        # replace only the first instance in the line,
+        # the rest are just comments
+        if "UwU " in line:
+            line = line.replace("UwU ", "# UwU ", 1)
+            is_comment = True
 
-        # split line by chars
-        chars = list(fs)
-        for char in chars:
-            buffer += char
-
-
+        # split line by words
+        words = line.split(" ")
+        for word in words:
+            # add the space back
+            buffer += (word + " ")
             
+            # check keywords, if match, add keywords to tokens
+            if "iws" in buffer:
+                buffer = buffer.replace("iws", "=")
+                tokens.append(Token(ASSIGNMENT, buffer))
+                buffer = ""
+            elif "OwO *notices " in buffer:
+                # in_loop += 1
+                buffer = buffer.replace("OwO *notices ", "while")
+                tokens.append(Token(WHILE, buffer))
+                buffer = ""
+            elif "gweatew twan" in buffer:
+                # this is old syntax
+                buffer = buffer.replace("gweatew twan", ">")
+                tokens.append(Token(COMMENT, "# Old syntax detected by tokeniser !!!\n"))
+                tokens.append(Token(GREATERTHAN, buffer))
+                buffer = ""
+            elif "*" in buffer:
+                in_loop -= 1
+                tokens.append(Token(STARTLOOP, ":"))
+                buffer = ""
+            elif "pwus" in buffer:
+                tokens.append(Token(ADD, "+"))
+                buffer = ""
+            elif "stawp" in buffer:
+                tokens.append(Token(ENDLOOP, ""))
+                buffer = ""
+            elif "nuzzels" in buffer:
+                # this is old syntax
+                tokens.append(Token(FUNCTIONCALL, "print"))
+                buffer = ""
+            elif "nuzzles" in buffer:
+                tokens.append(Token(FUNCTIONCALL, "print"))
+                buffer = ""
+            else:
+                tokens.append(Token(UNKNOWN, buffer))
+                buffer = ""
+
+        tokens.append(Token(NEWLINE, "\n"))
 
     return tokens
 
