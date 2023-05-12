@@ -1,13 +1,13 @@
-# UwU = twis fibonacci? UwU I hwope swo !? 
- 
-a = 1 
-b = 1 
-c = 0 
- 
-OwO :100 gweatew twan b :
-    c = b 
-    b = b +a 
-    a = c 
+# UwU iws twis fibonacci? UwU I hwope swo !?
 
- 
-print
+a iws 1
+b iws 1
+c iws 0
+
+OwO *notices 100 gweatew twan b *
+    c iws b
+    b iws b pwus a
+    a iws c
+stawp
+
+nuzzels(b)
