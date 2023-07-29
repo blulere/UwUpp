@@ -1,7 +1,5 @@
 package main
 
-// This release's version will be v0.2.0-go.
-
 import (
 	"fmt"
 	"io/ioutil"
@@ -13,12 +11,12 @@ import (
 )
 
 func main() {
-	transpile := false
-	_ = transpile
+	var input_filepath string
 	input_file := false
-	run_after := false
-	input_filepath := ""
 
+	// start a timer for checking how long ""compilation"" takes
+	// maybe this should be started later in the program as to not include parsing the request time
+	// or just be removed completely
 	timer_start := time.Now().UnixMilli()
 
 	if len(os.Args) > 1 {
@@ -26,29 +24,18 @@ func main() {
 		for i := 0; i < len(os.Args); i++ {
 			// shorthand
 			arg := os.Args[i]
-			if strings.Contains(arg, "-h") ||
-				strings.Contains(arg, "--help") {
+			if strings.Contains(arg, "help") {
 				show_help_and_exit()
-			}
-			if strings.Contains(arg, "-v") ||
-				strings.Contains(arg, "--version") {
+			} else if strings.Contains(arg, "version") {
 				version_and_exit()
 			}
-			if strings.Contains(arg, "-t") ||
-				strings.Contains(arg, "--transpile") {
-				transpile = true
-			}
-			if strings.Contains(arg, "-r") ||
-				strings.Contains(arg, "--run-after") {
-				run_after = true
-			}
-			if strings.Contains(arg, ".uwu") ||
-				strings.Contains(arg, ".uwupp") ||
-				strings.Contains(arg, ".uwu++") {
-				// there is an input file
-				input_file = true
-				input_filepath = arg
-			}
+		}
+		if strings.Contains(arg, ".uwu") ||
+			strings.Contains(arg, ".uwupp") ||
+			strings.Contains(arg, ".uwu++") {
+			// there is an input file
+			input_file = true
+			input_filepath = arg
 		}
 	} else {
 		// command-line arguments were not passed

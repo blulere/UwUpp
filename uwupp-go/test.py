@@ -1,2 +1,0 @@
-# UwU?
-print("Hewwo World")
