@@ -29,18 +29,18 @@ func main() {
 			} else if strings.Contains(arg, "version") {
 				version_and_exit()
 			}
+			if strings.Contains(arg, ".uwu") ||
+				strings.Contains(arg, ".uwupp") ||
+				strings.Contains(arg, ".uwu++") {
+				// there is an input file
+				input_file = true
+				input_filepath = arg
+			} else {
+				// command-line arguments were not passed
+				fmt.Println("error: no input files were specified")
+				os.Exit(0)
+			}
 		}
-		if strings.Contains(arg, ".uwu") ||
-			strings.Contains(arg, ".uwupp") ||
-			strings.Contains(arg, ".uwu++") {
-			// there is an input file
-			input_file = true
-			input_filepath = arg
-		}
-	} else {
-		// command-line arguments were not passed
-		fmt.Println("error: no input files were specified")
-		os.Exit(0)
 	}
 
 	// open the input file
