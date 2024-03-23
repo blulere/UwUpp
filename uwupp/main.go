@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -35,62 +32,51 @@ func main() {
 				// there is an input file
 				input_file = true
 				input_filepath = arg
-			} else {
-				// command-line arguments were not passed
-				fmt.Println("error: no input files were specified")
-				os.Exit(0)
 			}
 		}
+	} else {
+		// command-line arguments were not passed
+		fmt.Println("fatal: no arguments were specified.")
+		fmt.Println("use argument 'help' for help")
+		os.Exit(0)
 	}
 
 	// open the input file
 	if !input_file {
-		exception_and_exit("\"something weird happened somehow and no input file was assigned yet it's trying to do it anyways\"", nil)
+		fmt.Println("fatal: no input file was specified, yet uwupp is attempting to read from one, which is unintended behaviour.")
+		os.Exit(-1)
 	}
+	// read input with error handling
 	fs, err := os.ReadFile(input_filepath)
 	// SCREW YOU GO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// 22/03/2024 - just dropped in, thanks Go for making files byte[] and have to convert to strings, better than runes though LMFAOO
 	fs2 := string(fs)
+	_ = fs2
 	if err != nil {
-		exception_and_exit("error: opening the file failed! it probably doesn't exist, or something went wrong.", err)
+		fmt.Println("fatal: opening the file failed! it probably doesn't exist, or something went wrong.")
+		fmt.Printf("error: %v\n", err)
+		os.Exit(-2)
 	}
 
-	// transpile UwU++ to python code
-	newfile_name := strings.Replace(input_filepath, ".uwupp", ".py", 1)
-	newfile_name = strings.Replace(newfile_name, ".uwu", ".py", 1)
-	newfile_name = strings.Replace(newfile_name, ".uwu++", ".py", 1)
-	fs2, err = uwupp_to_python(fs2)
+	// fs2, err = uwupp_to_python(fs2)
+	err = interpret(fs2)
+	// err = nil
 	if err != nil {
-		exception_and_exit("error: transpiling the UwU++ code to python code failed.", err)
+		fmt.Printf("fatal: code execution failed.\n%v\n", err)
 	}
-	// transpilation completed
+	// interpretation completed
 
 	// this code doesn't work sometimes and I have no idea why.
 	// it seems a lot more stable when running through ioutil which is weird because it's the same damn function.
-	err = ioutil.WriteFile(newfile_name, []byte(fs2), 0644)
+	// err = os.WriteFile(newfile_name, []byte(fs2), 0644)
+	// 22/03/2024 Well I have good news for you blulere, this no longer transpiles lol it's an interpreter now
 
-	if err != nil {
-		exception_and_exit("error: writing to the new python file failed. you're likely out of storage space or your antivirus blocked the program...", err)
-	}
+	/* if err != nil {
+		("error: writing to the new python file failed. you're likely out of storage space or your antivirus blocked the program...", err)
+	} */
 	// get timer in seconds and milliseconds
 	timer := float32(time.Now().UnixMilli()-timer_start) / 1000
 	fmt.Printf("done, operation completed in %v seconds\n", timer)
-	// FIXME: WHAT THE HELL IS WRONG WITH THIS CODE!?!?!?!?!?!?!?!?!?!? WHY DOESN'T IT WORK???????
-	if run_after {
-		if runtime.GOOS == "windows" {
-			cmd := exec.Command("cmd", "python", "main.py", "-t"+newfile_name)
-			out, err := cmd.CombinedOutput()
-			fmt.Println(string(out))
-			if err != nil {
-				exception_and_exit("error: something went wrong whilst trying to run the python file. maybe you're out of storage?", err)
-			}
-		} else {
-			cmd := exec.Command("bash", "python3", "main.py", "-t"+newfile_name)
-			out, err := cmd.Output()
-			fmt.Println(string(out))
-			if err != nil {
-				exception_and_exit("error: something went wrong whilst trying to run the python file. maybe you're out of storage?", err)
-			}
-		}
-		// exec.Command has no error variable so no need to check for errors here
-	}
+
+	// done!
 }
