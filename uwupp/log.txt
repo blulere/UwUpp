@@ -1,46 +1,8 @@
-UwU
--2
-?
-63
-is
--2
-this
--2
-IO
--2
-?
-63
-nuzzels
--2
-(
-40
-"What's your name?"
--6
-)
-41
-name
--2
-iws
--2
-wisten
--2
-(
-40
-)
-41
-nuzzels
--2
-(
-40
-"*notices* "
--6
-pwus
--2
-name
--2
-pwus
--2
-" OwO"
--6
-)
-41
+{ID: 0 | Data: 'UwU twis iws a comment?'}
+{ID: 4 | Data: 'x iws'}
+{ID: 2 | Data: '5'}
+{ID: 0 | Data: ' UwU twis iws awso a comment?'}
+{ID: 6 | Data: 'nuzzles('}
+{ID: 7 | Data: 'x)'}
+{ID: 1 | Data: ''}
+{ID: 1 | Data: ''}
